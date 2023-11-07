@@ -48,7 +48,7 @@ y = np.arange(-90, 110, 4)
 # Split data into train and test sets
 N = 25
 X_train = X[:N] # 40 sample pertama (80% data)
-Y_train = y[:N]
+y_train = y[:N]
 
 X_test = X[:N] # 10 sample pertama (20% data)
 Y_test = y[:N]
