@@ -17,7 +17,7 @@ def plot_predictions(train_data, train_labels,  test_data, test_labels,  predict
   # Plot the predictions in red (predictions were made on the test data)
   plt.scatter(test_data, predictions, c="r", label="Predictions")
   # Show the legend
-  plt.legend(shadow='True')
+  plt.legend(shadow=True)
   # Set grids
   plt.grid(which='major', c='#cccccc', linestyle='--', alpha=0.5)
   # Some text
@@ -30,4 +30,72 @@ def plot_predictions(train_data, train_labels,  test_data, test_labels,  predict
 
 
 def mae(y_test, y_pred):
-  ""
+  """
+  Calculuates mean absolute error between y_test and y_preds.
+  """
+  return tf.metrics.mean_absolute_error(y_test, y_pred)
+  
+
+def mse(y_test, y_pred):
+  """
+  Calculates mean squared error between y_test and y_preds.
+  """
+  return tf.metrics.mean_squared_error(y_test, y_pred)
+
+
+# Check Tensorflow version
+print(tf.__version__)
+
+
+# Create features
+X = np.arange(-100, 100, 4)
+
+# Create labels
+y = np.arange(-90, 110, 4)
+
+
+# Split data into train and test sets
+N = 40
+X_train = X[:N] # first 40 examples (80% of data)
+y_train = y[:N]
+
+X_test = X[N:] # last 10 examples (20% of data)
+y_test = y[N:]
+
+
+# Take a single example of X
+input_shape = X[0].shape 
+
+# Take a single example of y
+output_shape = y[0].shape
+
+
+# Set random seed
+tf.random.set_seed(1989)
+
+# Create a model using the Sequential API
+model = tf.keras.Sequential([
+    tf.keras.layers.Input(shape=(1,)),  # Input layer with a single feature
+    tf.keras.layers.Dense(1)  # Output layer with a single neuron
+])
+
+# Compile the model
+model.compile(loss='mae',
+              optimizer=tf.keras.optimizers.SGD(),
+              metrics=['mae'])
+
+# Fit the model
+model.fit(X_train, y_train, epochs=100)
+
+# Make and plot predictions
+y_preds = model.predict(X_test)
+plot_predictions(train_data=X_train, train_labels=y_train, test_data=X_test, test_labels=y_test, predictions=y_preds)
+
+# Calculate metrics
+mae_1 = np.mean(tf.keras.losses.MAE(y_test, y_preds).numpy())
+mse_1 = np.mean(tf.keras.losses.MSE(y_test, y_preds).numpy())
+print(f'Mean Absolute Error = {mae_1:.2f}, Mean Squared Error = {mse_1:.2f}.')
+
+# Write metrics to a file
+with open('metrics.txt', 'w') as outfile:
+    outfile.write(f'Mean Absolute Error = {mae_1:.2f}, Mean Squared Error = {mse_1:.2f}.')
