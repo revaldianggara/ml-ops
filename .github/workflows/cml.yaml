@@ -3,9 +3,12 @@ on: [push]
 jobs:
   run:
     runs-on: [ubuntu-latest]
-    container: python:3.11  # Ganti dengan nama container yang tepat jika tersedia
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install CML
+        run: pip install cml
+
       - name: 'Train my model'
         env:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -13,14 +16,20 @@ jobs:
 
           # Your ML workflow goes here
           pip install -r requirements.txt
-          python model.py
-          
+
+          # Install Python 3.11 (if needed)
+          # sudo add-apt-repository ppa:deadsnakes/ppa
+          # sudo apt-get update
+          # sudo apt-get install python3.11
+
+          python3.11 model.py
+
           echo "## Model Metrics" > report.md
           cat metrics.txt >> report.md
-          
+
           echo "\n## Model Performance" >> report.md
           echo "Model performance metrics are on the plot below." >> report.md
-          
+
           cml-publish model_results.png --md >> report.md
-          
+
           cml-send-comment report.md
