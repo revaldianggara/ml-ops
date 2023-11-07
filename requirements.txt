@@ -4,7 +4,6 @@ cachetools==4.2.4
 certifi==2023.7.22
 charset-normalizer==3.0.0
 contourpy==1.2.0
-cloud-ml-sdk<0.2.2
 cycler==0.12.1
 flatbuffers==23.5.26
 fonttools==4.44.0
