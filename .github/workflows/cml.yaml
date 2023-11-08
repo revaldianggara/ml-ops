@@ -1,34 +1,33 @@
 name: mlops-regression
-on: [push]
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   run:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Install CML
-        run: pip install cml
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8  # You can specify the desired Python version
 
-      - name: 'Train my model'
-        env:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
         run: |
-
-          # Your ML workflow goes here
           pip install -r requirements.txt
-          
-          # sudo add-apt-repository ppa:deadsnakes/ppa
-          # sudo apt-get update
-          # sudo apt-get install python3.11
 
-          python3 model.py
-
+      - name: Train my model
+        run: |
+          python model.py
           echo "## Model Metrics" > report.md
           cat metrics.txt >> report.md
-
           echo "\n## Model Performance" >> report.md
           echo "Model performance metrics are on the plot below." >> report.md
-
           cml-publish model_results.png --md >> report.md
-
           cml-send-comment report.md
