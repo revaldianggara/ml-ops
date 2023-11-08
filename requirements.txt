@@ -1,3 +1,4 @@
 tensorflow
 matplotlib
 numpy
+argcomplete==1.4.1
